@@ -1,0 +1,4 @@
+ID,Nombre,DtAniversario,Telefono,Email,Status,Critico,Comentario,curso_ID,createdAt,createdBy,modifiedAt,modifiedBy
+99e896ef-9668-43c4-9add-4caa1c85a9c3,Miguel,1986-02-13,+55 11 123456789,miguel@gmail.com,A,,,f611c7b3-b9c3-47a1-8006-9093165ee37b,,,,
+d1a13675-4305-4eb8-a309-c6461f5b7aba,Pedro,1986-01-01,+55 11 987654321,pedro@gmail.com,P,,,f611c7b3-b9c3-47a1-8006-9093165ee37b,,,,
+6b1ac6ba-5085-40c2-8627-0cc49ef04d4d,Miguel,1986-02-13,+55 11 123456789,miguel@gmail.com,I,,,6b7fb732-9377-496e-bbe2-983619033867,,,,

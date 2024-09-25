@@ -1,0 +1,133 @@
+_schema-version: 3.3.0
+ID: Alumnos
+description: A simple CAP project.
+version: 1.0.0
+modules:
+- name: Alumnos-srv
+  type: nodejs
+  path: gen/srv
+  requires:
+  - name: Alumnos-auth
+  - name: Alumnos-db
+  - name: Alumnos-destination
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  parameters:
+    buildpack: nodejs_buildpack
+    readiness-health-check-http-endpoint: /health
+    readiness-health-check-type: http
+  build-parameters:
+    builder: npm
+- name: Alumnos-db-deployer
+  type: hdb
+  path: gen/db
+  requires:
+  - name: Alumnos-db
+  parameters:
+    buildpack: nodejs_buildpack
+- name: Alumnos-app-deployer
+  type: com.sap.application.content
+  path: gen
+  requires:
+  - name: Alumnos-html5-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: app/
+    requires:
+    - artifacts:
+      - alumnos.zip
+      name: alumnos
+      target-path: app//
+    - artifacts:
+      - cursos.zip
+      name: cursos
+      target-path: app//
+    - artifacts:
+      - alumnosporcurso.zip
+      name: alumnosporcurso
+      target-path: app//
+- name: alumnos
+  type: html5
+  path: app/alumnos
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: cursos
+  type: html5
+  path: app/cursos
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: alumnosporcurso
+  type: html5
+  path: app/alumnosporcurso
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: Alumnos-auth
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      tenant-mode: dedicated
+      xsappname: Alumnos-${org}-${space}
+    path: ./xs-security.json
+    service: xsuaa
+    service-plan: application
+- name: Alumnos-db
+  type: com.sap.xs.hdi-container
+  parameters:
+    service: hana
+    service-plan: hdi-shared
+- name: Alumnos-destination
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: false
+      init_data:
+        instance:
+          destinations:
+          - Authentication: OAuth2UserTokenExchange
+            HTML5.DynamicDestination: true
+            HTML5.ForwardAuthToken: true
+            Name: Alumnos-srv-api
+            ProxyType: Internet
+            Type: HTTP
+            URL: ~{srv-api/srv-url}
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+    service: destination
+    service-plan: lite
+- name: Alumnos-html5-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-plan: app-host
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm ci
+    - npx cds build --production
