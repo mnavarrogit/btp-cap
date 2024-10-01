@@ -1,5 +1,6 @@
 using { entrenamiento, sap.common } from '../db/schemas';
 
+@path: 'service/admin'
 service AdminService {
 
     type inText: {
@@ -22,6 +23,8 @@ service AdminService {
     annotate Cursos with @odata.draft.bypass;
 
 }
+annotate AdminService with @(requires:'admin');
+
 
 service EstudiantesService {
     @readonly
@@ -33,6 +36,8 @@ service EstudiantesService {
             estudiantes.DtAniversario as DataAniversario
         }
 }
+
+annotate EstudiantesService with @(requires:'viewer');
 
 annotate AdminService.inText:comment with @Common.Label : 'Comentarios';
 annotate AdminService.inText:comment with @UI.MultiLineText : true;

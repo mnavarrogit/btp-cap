@@ -1,6 +1,4 @@
-const { update } = require('@sap/cds');
-const cds = require('@sap/cds');
-const { rewrite } = require('@sap/cds/libx/_runtime/db/generic');
+const cds = require('@sap/cds')
 const { SELECT, INSERT, UPDATE, DELETE } = cds.ql
 
 module.exports = cds.service.impl(function() {

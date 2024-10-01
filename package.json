@@ -6,7 +6,6 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "@cap-js/attachments": "^1.1.6",
     "@cap-js/hana": "^1",
     "@sap/cds": "^8",
     "@sap/textbundle": "^5.2.0",
@@ -31,8 +30,30 @@
   },
   "cds": {
     "requires": {
-      "auth": "mocked",
-      "destinations": true,
+      "[development]": {
+        "auth": {
+          "kind": "mocked",
+          "users": {
+            "aluno.viewer@test.com": {
+              "password": "initial",
+              "roles": [
+                "viewer"
+              ]
+            },
+            "cfurigo@coachit.com.br": {
+              "password": "super",
+              "roles": [
+                "admin",
+                "viewer"
+              ]
+            }
+          }
+        }
+      },
+      "[production]": {
+        "db": "hana",
+        "auth": "xsuaa"
+      },
       "html5-repo": true
     },
     "sql": {
